@@ -1,0 +1,57 @@
+@use "pico" with (
+  $theme-color: "violet",
+  $enable-semantic-container: true,
+  $enable-viewport: true,
+  $enable-classes: true,
+  $modules: (
+    // Theme
+    "themes/default": true,
+
+    // Layout
+    "layout/document": true,
+    "layout/landmarks": true,
+    "layout/section": false,
+    "layout/container": false,
+    "layout/grid": false,
+    "layout/overflow-auto": false,
+
+    // Content
+    "content/typography": true,
+    "content/link": true,
+    "content/button": true,
+    "content/table": true,
+    "content/embedded": false,
+    "content/code": false,
+    "content/miscs": false,
+
+    // Forms
+    "forms/basics": true,
+    "forms/checkbox-radio-switch": false,
+    "forms/input-color": false,
+    "forms/input-date": false,
+    "forms/input-file": false,
+    "forms/input-range": true,
+    "forms/input-search": false,
+
+    // Components
+    "components/accordion": false,
+    "components/card": true,
+    "components/dropdown": false,
+    "components/group": false,
+    "components/loading": false,
+    "components/modal": false,
+    "components/nav": true,
+    "components/progress": false,
+    "components/tooltip": false,
+
+    // Utilities
+    "utilities/accessibility": false,
+    "utilities/reduce-motion": false,
+  )
+);
+
+:root {
+  --pico-font-family: inherit;
+  --pico-font-family-sans-serif: sans-serif;
+  --pico-font-family-monospace: monospace;
+}
