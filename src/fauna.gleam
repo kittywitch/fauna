@@ -68,15 +68,15 @@ pub fn main() {
     io.println("Gleam Radiate says path " <> event <> " has requested recompilation")
       case operations.get(sem_table, "sem") {
         Ok(option.Some(_v)) -> {
-          io.println("awa!")
           Nil
         }
         Ok(option.None) -> {
-          let _ = operations.set(sem_table, "sem", "nyaa~")
-          io.println("ooh!")
-          let _ =  broadcast_livereload()
-          process.sleep(5000)
-          let _ = operations.delete(sem_table, "sem")
+          process.spawn(fn() {
+            let _ = operations.set(sem_table, "sem", "nyaa~")
+            let _ =  broadcast_livereload()
+            process.sleep(5000)
+            let _ = operations.delete(sem_table, "sem")
+          })
           Nil
         }
         Error(_err) -> {

@@ -17,7 +17,7 @@ type LivereloadDependencies {
 }
 
 pub fn trigger_livereload(
-  request: Request,
+  _request: Request,
   _context: EmptyContext,
   services: Services,
 ) -> Response {
@@ -66,15 +66,15 @@ fn handle_websocket_message(
   connection: websocket.Connection,
   dependencies: LivereloadDependencies,
 ) -> websocket.Action(String, ReloadPacket) {
-  let LivereloadDependencies(services: services) = dependencies
+  let LivereloadDependencies(services: _services) = dependencies
 
   case message {
-    websocket.TextMessage(text) -> {
+    websocket.TextMessage(_text) -> {
       websocket.continue_connection(state)
     }
     websocket.CustomMessage(msg) -> {
       io.println(msg |> string.inspect)
-      case msg {
+      let _ = case msg {
         MicCheck -> {
           let json_msg = json.object([
             #("type", json.string("acknowledgement"))
@@ -95,8 +95,8 @@ fn handle_websocket_message(
   }
 }
 
-fn handle_websocket_close(state: String, dependencies: LivereloadDependencies) -> Nil {
-  let LivereloadDependencies(services: services) = dependencies
+fn handle_websocket_close(_state: String, dependencies: LivereloadDependencies) -> Nil {
+  let LivereloadDependencies(services: _services) = dependencies
   Nil
   //broadcaster.publish(services.livereload, )
 }

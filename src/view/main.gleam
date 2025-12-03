@@ -6,7 +6,7 @@ pub fn head(title: String, dev_mode: Bool) -> Node {
   let dev_script = case dev_mode {
     True -> [
       html.Script([
-        attr.src("/assets/js/livereload.js?port=3000&mindelay=10")
+        attr.src("/assets/js/livereload.js")
       ],"")
     ]
     False -> []
