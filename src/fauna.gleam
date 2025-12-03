@@ -71,8 +71,8 @@ pub fn main() {
           Nil
         }
         Ok(option.None) -> {
+          let _ = operations.set(sem_table, "sem", "nyaa~")
           process.spawn(fn() {
-            let _ = operations.set(sem_table, "sem", "nyaa~")
             let _ =  broadcast_livereload()
             process.sleep(5000)
             let _ = operations.delete(sem_table, "sem")
