@@ -11,7 +11,7 @@ import gleam/erlang/process
 import gleam/string
 import gleam/option
 import dream_ets/config as ets
-import dream_ets/table
+import dream_ets/table.{type Table}
 import dream_ets/operations
 import child_process
 import child_process/stdio
@@ -40,6 +40,26 @@ pub fn compile_sass() {
     io.println("SASS recompilation complete.")
 }
 
+pub fn handle_sem(sem_table: Table(String, String)) {
+  case operations.get(sem_table, "sem") {
+    Ok(option.Some(_v)) -> {
+      Nil
+    }
+    Ok(option.None) -> {
+      let _ = operations.set(sem_table, "sem", "nyaa~")
+      process.spawn(fn() {
+        let _ =  broadcast_livereload()
+        process.sleep(5000)
+        let _ = operations.delete(sem_table, "sem")
+      })
+      Nil
+    }
+    Error(_err) -> {
+      Nil
+    }
+  }
+}
+
 pub fn main() {
   let assert Ok(sem_table) = ets.new("RecompSemaphore")
     |> ets.key_string()
@@ -60,30 +80,27 @@ pub fn main() {
     Nil
   })
   |> filespy.start()
+  
+  io.println("Beginning asset hot-reload watcher")
+  let _ses = filespy.new()
+  |> filespy.add_dir("assets")
+  |> filespy.set_handler(fn (path, event) {
+    io.println("Asset Filespy says " <> path <> " has been " <> {event |> string.inspect()})
+    case event {
+      Closed -> handle_sem(sem_table)
+      _ -> Nil
+    }
+    Nil
+  })
+  |> filespy.start()
 
   io.println("Beginning Gleam recompilation watcher")
   let _res = radiate.new()
   |> radiate.add_dir(".")
   |> radiate.on_reload(fn (_path, event) {
     io.println("Gleam Radiate says path " <> event <> " has requested recompilation")
-      case operations.get(sem_table, "sem") {
-        Ok(option.Some(_v)) -> {
-          Nil
-        }
-        Ok(option.None) -> {
-          let _ = operations.set(sem_table, "sem", "nyaa~")
-          process.spawn(fn() {
-            let _ =  broadcast_livereload()
-            process.sleep(5000)
-            let _ = operations.delete(sem_table, "sem")
-          })
-          Nil
-        }
-        Error(_err) -> {
-          Nil
-        }
-      }
-    Nil
+      handle_sem(sem_table)
+      Nil
     })
     |> radiate.start()
 
